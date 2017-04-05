@@ -48,7 +48,7 @@ namespace BooksAPI
 
             //Enables the OAuth Endpoint
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions {
-#if Debug
+#if DEBUG
                 AllowInsecureHttp = true,
 #endif
                 TokenEndpointPath = new PathString("/oauth2/token"),

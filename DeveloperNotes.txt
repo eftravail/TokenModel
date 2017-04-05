@@ -1,0 +1,7 @@
+Tutorials List
+	1) http://www.developerhandbook.com/c-sharp/create-restful-api-authentication-using-web-api-jwt/
+		a) Keeps API and AUTH within same project
+		b) most of the code was written following this tutorial
+
+	2) https://docs.microsoft.com/en-us/aspnet/aspnet/overview/owin-and-katana/owin-oauth-20-authorization-server
+		a) Reviewing for Server component lessons

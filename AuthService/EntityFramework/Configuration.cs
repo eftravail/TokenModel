@@ -1,7 +1,9 @@
 ﻿//using AuthService.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security.DataHandler.Encoder;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace AuthService.EntityFramework
 {
@@ -36,10 +38,18 @@ namespace AuthService.EntityFramework
 
             if (!context.Users.Any())
             {
-                var administrator = context.Users.Add(new IdentityUser("administrator") { Email = "admin@somesite.com", EmailConfirmed = true });
+                var userKey = new byte[32];
+                RNGCryptoServiceProvider.Create().GetBytes(userKey);
+                var userSecret = TextEncodings.Base64Url.Encode(userKey);
+
+                var administrator = context.Users.Add(new IdentityUser("administrator") { Email = "admin@somesite.com", EmailConfirmed = true, SecurityStamp = userSecret });
                 administrator.Roles.Add(new IdentityUserRole { RoleId = adminRoleId });
 
-                var standardUser = context.Users.Add(new IdentityUser("jonpreece") { Email = "jon@somesite.com", EmailConfirmed = true });
+                userKey = new byte[32];
+                RNGCryptoServiceProvider.Create().GetBytes(userKey);
+                userSecret = TextEncodings.Base64Url.Encode(userKey);
+
+                var standardUser = context.Users.Add(new IdentityUser("jonpreece") { Email = "jon@somesite.com", EmailConfirmed = true, SecurityStamp = userSecret });
                 standardUser.Roles.Add(new IdentityUserRole { RoleId = userRoleId });
 
                 context.SaveChanges();

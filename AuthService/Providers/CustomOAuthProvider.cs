@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -27,7 +28,13 @@ namespace AuthService.Providers
                 return Task.FromResult<object>(null);
             }
 
-            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), new AuthenticationProperties());
+            var props = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    { "audience", (context.ClientId == null) ? string.Empty : context.ClientId }
+                });
+
+            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), props);
+
             context.Validated(ticket);
 
             return Task.FromResult<object>(null);
@@ -35,7 +42,31 @@ namespace AuthService.Providers
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
+            string clientId = string.Empty;
+            string clientSecret = string.Empty;
+            string symmetricKeyAsBase64 = string.Empty;
+
+            if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
+            {
+                context.TryGetFormCredentials(out clientId, out clientSecret);
+            }
+
+            if (context.ClientId == null)
+            {
+                context.SetError("invalid_clientId", "client_Id is not set");
+                return Task.FromResult<object>(null);
+            }
+
+            var audience = AudiencesStore.FindAudience(context.ClientId);
+
+            if (audience == null)
+            {
+                context.SetError("invalid_clientId", string.Format("Invalid client_id '{0}'", context.ClientId));
+                return Task.FromResult<object>(null);
+            }
+
             context.Validated();
+
             return Task.FromResult<object>(null);
         }
 

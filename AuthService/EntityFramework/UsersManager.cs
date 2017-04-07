@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace AuthService.Core
+namespace AuthService.EntityFramework
 {
     public class UsersManager : UserManager<IdentityUser>
     {

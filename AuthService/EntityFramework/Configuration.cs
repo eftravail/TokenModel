@@ -3,7 +3,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.Migrations;
 using System.Linq;
 
-namespace AuthService.Core.EntityFramework
+namespace AuthService.EntityFramework
 {
     public class Configuration : DbMigrationsConfiguration<UsersContext>
     {

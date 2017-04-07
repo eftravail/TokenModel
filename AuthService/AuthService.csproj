@@ -191,11 +191,11 @@
   <ItemGroup>
     <Compile Include="App_Start\Startup.OAuth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Core\UsersManager.cs" />
-    <Compile Include="Core\EntityFramework\Configuration.cs" />
-    <Compile Include="Core\EntityFramework\Initializer.cs" />
-    <Compile Include="Core\UsersContext.cs" />
-    <Compile Include="Core\UsersStore.cs" />
+    <Compile Include="EntityFramework\UsersManager.cs" />
+    <Compile Include="EntityFramework\Configuration.cs" />
+    <Compile Include="EntityFramework\Initializer.cs" />
+    <Compile Include="EntityFramework\UsersContext.cs" />
+    <Compile Include="EntityFramework\UsersStore.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace AuthService.Core
+namespace AuthService.EntityFramework
 {
     public class UsersStore : UserStore<IdentityUser>
     {

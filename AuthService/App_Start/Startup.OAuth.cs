@@ -1,4 +1,4 @@
-﻿using AuthService.Core;
+﻿using AuthService.EntityFramework;
 using AuthService.Formats;
 using AuthService.Providers;
 using Microsoft.Owin;

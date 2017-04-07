@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 
-namespace AuthService.Core.EntityFramework
+namespace AuthService.EntityFramework
 {
     /// <summary>
     /// Tells Entity Framework to automatically upgrade the database based on the Context and Configuration

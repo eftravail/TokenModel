@@ -11,7 +11,7 @@ namespace AuthService
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
             // Tell the web application about the Entity Framework intializer
-            Database.SetInitializer(new Core.EntityFramework.Initializer());
+            Database.SetInitializer(new EntityFramework.Initializer());
 
             // Configure JSON
             var formatters = GlobalConfiguration.Configuration.Formatters;

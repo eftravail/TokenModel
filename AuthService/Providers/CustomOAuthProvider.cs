@@ -1,4 +1,4 @@
-﻿using AuthService.Core;
+﻿using AuthService.EntityFramework;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;

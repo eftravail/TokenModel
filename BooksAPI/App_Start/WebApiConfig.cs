@@ -1,5 +1,4 @@
 ﻿using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace BooksAPI
 {
@@ -7,11 +6,6 @@ namespace BooksAPI
     {
         public static void Register(HttpConfiguration config)
         {
-            // CORS (Cross-Origin Resource Sharing) configuration
-            var cors = new EnableCorsAttribute("*", "*", "*");
-            config.EnableCors(cors);
-            config.MessageHandlers.Add(new PreflightRequestsHandler());
-
             // Web API routes
             config.MapHttpAttributeRoutes();
 

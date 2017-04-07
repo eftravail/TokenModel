@@ -1,9 +1,9 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(BooksAPI.Startup))]
+[assembly: OwinStartup(typeof(AuthService.Startup))]
 
-namespace BooksAPI
+namespace AuthService
 {
     public partial class Startup
     {

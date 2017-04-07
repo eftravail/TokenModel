@@ -11,8 +11,8 @@ namespace BooksAPI
             // Configure Web API
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
-            // Restrict access to all endpoints (except the OAuth endpoint) to requests that have been authenticated
-            GlobalConfiguration.Configure(FilterConfig.Configure);
+            //// Restrict access to all endpoints (except the OAuth endpoint) to requests that have been authenticated
+            //GlobalConfiguration.Configure(FilterConfig.Configure);
 
             // Tell the web application about the Entity Framework intializer
             Database.SetInitializer(new Core.EntityFramework.Initializer());

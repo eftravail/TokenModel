@@ -1,13 +1,12 @@
 ﻿using BooksAPI.Core;
-using BooksAPI.Identity;
-using Microsoft.Owin;
+//using BooksAPI.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler.Encoder;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using System;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace BooksAPI
 {
@@ -16,46 +15,24 @@ namespace BooksAPI
         private void ConfigureOAuth(IAppBuilder app)
         {
             var issuer = ConfigurationManager.AppSettings["issuer"];
-            var secret = TextEncodings.Base64Url.Decode(ConfigurationManager.AppSettings["secret"]); //TODO: Add a salt value here as well?
+            //var audience = ConfigurationManager.AppSettings["audience"];
+            var secret = TextEncodings.Base64Url.Decode(ConfigurationManager.AppSettings["secret"]);
 
             app.CreatePerOwinContext(() => new BooksContext());
-            app.CreatePerOwinContext(() => new BookUserManager());
 
-
-            ////Sets JWT Token validation rules
-            //var tokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters()
-            //{
-            //    ClockSkew = new TimeSpan(0, 5, 0)
-            //};
-
-
-            //Enables the JWT Token
             app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions {
                 AuthenticationMode = AuthenticationMode.Active,
                 AllowedAudiences = new[] { "Any" },
-                //TokenValidationParameters = tokenValidationParameters,
-                IssuerSecurityTokenProviders = new IIssuerSecurityTokenProvider[] { new SymmetricKeyIssuerSecurityTokenProvider(issuer, secret) }
-            });
-
-
-            // Get timespan from configuration or set default if not available
-            int timespan;
-            int.TryParse(ConfigurationManager.AppSettings["TimespanInMinutes"], out timespan);
-
-            if (timespan == 0)
-                timespan = 30;
-
-
-            //Enables the OAuth Endpoint
-            app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions {
-#if DEBUG
-                AllowInsecureHttp = true,
-#endif
-                TokenEndpointPath = new PathString("/oauth2/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(timespan),
-                Provider = new CustomOAuthProvider(),
-                AccessTokenFormat = new CustomJwtFormat(issuer),
-                //AuthorizeEndpointPath = new PathString("/oauth2/authorize"),
+                //AllowedAudiences = new[] { audience },
+                IssuerSecurityTokenProviders = new IIssuerSecurityTokenProvider[] { new SymmetricKeyIssuerSecurityTokenProvider(issuer, secret) },
+                Provider = new OAuthBearerAuthenticationProvider
+                {
+                    OnValidateIdentity = context =>
+                    {
+                        context.Ticket.Identity.AddClaim(new System.Security.Claims.Claim("newCustomClaim", "newValue"));
+                        return Task.FromResult<object>(null);
+                    }
+                }
             });
         }
     }

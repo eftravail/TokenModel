@@ -5,3 +5,14 @@ Tutorials List
 
 	2) https://docs.microsoft.com/en-us/aspnet/aspnet/overview/owin-and-katana/owin-oauth-20-authorization-server
 		a) Reviewing for Server component lessons
+
+xx	3) http://bitoftech.net/2014/09/24/decouple-owin-authorization-server-resource-server-oauth-2-0-web-api/
+		a) Discusses decoupling the OWIN Authorization Server
+		b) Original article references the article shown in #4
+
+xx	4) http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/
+		a) 
+
+
+
+		http://bitoftech.net/2015/03/31/asp-net-web-api-claims-authorization-with-asp-net-identity-2-1/

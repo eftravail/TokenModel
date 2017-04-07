@@ -1,4 +1,4 @@
-﻿using BooksAPI.Core;
+﻿using AuthService.Core;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BooksAPI.Identity
+namespace AuthService.Providers
 {
     public class CustomOAuthProvider : OAuthAuthorizationServerProvider
     {
@@ -18,9 +18,9 @@ namespace BooksAPI.Identity
 
             //TODO: Other data checks we can do to validate?
 
-            var user = context.OwinContext.Get<BooksContext>().Users.FirstOrDefault(u => u.UserName == context.UserName);
+            var user = context.OwinContext.Get<UsersContext>().Users.FirstOrDefault(u => u.UserName == context.UserName);
 
-            if (!context.OwinContext.Get<BookUserManager>().CheckPassword(user, context.Password))
+            if (!context.OwinContext.Get<UsersManager>().CheckPassword(user, context.Password))
             {
                 context.SetError("invalid_grant", "The user name or password is incorrect");
                 context.Rejected();
@@ -45,7 +45,7 @@ namespace BooksAPI.Identity
             identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
             identity.AddClaim(new Claim("sub", context.UserName));
 
-            var userRoles = context.OwinContext.Get<BookUserManager>().GetRoles(user.Id);
+            var userRoles = context.OwinContext.Get<UsersManager>().GetRoles(user.Id);
             foreach (var role in userRoles)
             {
                 identity.AddClaim(new Claim(ClaimTypes.Role, role));

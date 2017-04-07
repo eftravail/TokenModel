@@ -10,6 +10,7 @@ namespace BooksAPI.Controllers
 {
     public class ReviewsController : ApiController
     {
+        [Authorize]
         [HttpPost]
         public async Task<IHttpActionResult> Post([FromBody] ReviewViewModel review)  //Note this accepts only the ReviewViewModel object and in that we map to the Models.Review object
         {
@@ -33,6 +34,7 @@ namespace BooksAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<IHttpActionResult> Delete(int id)
         {

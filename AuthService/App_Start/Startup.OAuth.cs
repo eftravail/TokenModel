@@ -17,7 +17,12 @@ namespace AuthService
         private void ConfigureOAuth(IAppBuilder app)
         {
             var issuer = ConfigurationManager.AppSettings["issuer"];
+            var audience = ConfigurationManager.AppSettings["audience"] != null ? ConfigurationManager.AppSettings["audience"] : "Any";
             var secret = TextEncodings.Base64Url.Decode(ConfigurationManager.AppSettings["secret"]); //TODO: Add a salt value here as well?
+            var allowInsecure = false;
+#if DEBUG
+            allowInsecure = true;
+#endif
 
             app.CreatePerOwinContext(() => new UsersContext());
             app.CreatePerOwinContext(() => new UsersManager());
@@ -26,7 +31,11 @@ namespace AuthService
             ////Sets JWT Token validation rules
             //var tokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters()
             //{
-            //    ClockSkew = new TimeSpan(0, 5, 0)
+            //    ClockSkew = new TimeSpan(0, 5, 0),
+            //    RequireExpirationTime = true,
+            //    RequireSignedTokens = true,
+            //    ValidateIssuer = true,
+            //    ValidateIssuerSigningKey = true
             //};
 
 
@@ -34,7 +43,7 @@ namespace AuthService
             app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
             {
                 AuthenticationMode = AuthenticationMode.Active,
-                AllowedAudiences = new[] { "Any" },
+                AllowedAudiences = new[] { audience },
                 //TokenValidationParameters = tokenValidationParameters,
                 IssuerSecurityTokenProviders = new IIssuerSecurityTokenProvider[] { new SymmetricKeyIssuerSecurityTokenProvider(issuer, secret) }
             });
@@ -51,9 +60,7 @@ namespace AuthService
             //Enables the OAuth Endpoint
             app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
-#if DEBUG
-                AllowInsecureHttp = true,
-#endif
+                AllowInsecureHttp = allowInsecure,
                 TokenEndpointPath = new PathString("/oauth2/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(timespan),
                 Provider = new CustomOAuthProvider(),

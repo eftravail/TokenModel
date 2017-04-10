@@ -1,6 +1,4 @@
-﻿using BooksAPI.Core;
-//using BooksAPI.Identity;
-using Microsoft.Owin.Security;
+﻿using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler.Encoder;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
@@ -15,15 +13,12 @@ namespace BooksAPI
         private void ConfigureOAuth(IAppBuilder app)
         {
             var issuer = ConfigurationManager.AppSettings["issuer"];
-            //var audience = ConfigurationManager.AppSettings["audience"];
+            var audience = ConfigurationManager.AppSettings["audience"] != null ? ConfigurationManager.AppSettings["audience"] : "Any";
             var secret = TextEncodings.Base64Url.Decode(ConfigurationManager.AppSettings["secret"]);
-
-            app.CreatePerOwinContext(() => new BooksContext());
 
             app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions {
                 AuthenticationMode = AuthenticationMode.Active,
-                AllowedAudiences = new[] { "Any" },
-                //AllowedAudiences = new[] { audience },
+                AllowedAudiences = new[] { audience },
                 IssuerSecurityTokenProviders = new IIssuerSecurityTokenProvider[] { new SymmetricKeyIssuerSecurityTokenProvider(issuer, secret) },
                 Provider = new OAuthBearerAuthenticationProvider
                 {

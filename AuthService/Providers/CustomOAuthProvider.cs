@@ -17,8 +17,6 @@ namespace AuthService.Providers
         {
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
 
-            //TODO: Other data checks we can do to validate?
-
             var user = context.OwinContext.Get<UsersContext>().Users.FirstOrDefault(u => u.UserName == context.UserName);
 
             if (!context.OwinContext.Get<UsersManager>().CheckPassword(user, context.Password))
@@ -28,12 +26,13 @@ namespace AuthService.Providers
                 return Task.FromResult<object>(null);
             }
 
-            var props = new AuthenticationProperties(new Dictionary<string, string>
-                {
-                    { "audience", (context.ClientId == null) ? string.Empty : context.ClientId }
-                });
+            //var props = new AuthenticationProperties(new Dictionary<string, string>
+            //    {
+            //        { "audience", (context.ClientId == null) ? string.Empty : context.ClientId }
+            //    });
 
-            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), props);
+            //var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), props);
+            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), new AuthenticationProperties());
 
             context.Validated(ticket);
 
@@ -42,28 +41,20 @@ namespace AuthService.Providers
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            string clientId = string.Empty;
-            string clientSecret = string.Empty;
-            string symmetricKeyAsBase64 = string.Empty;
+            //    string clientId = string.Empty;
+            //    string clientSecret = string.Empty;
+            //    string symmetricKeyAsBase64 = string.Empty;
 
-            if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
-            {
-                context.TryGetFormCredentials(out clientId, out clientSecret);
-            }
+            //    if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
+            //    {
+            //        context.TryGetFormCredentials(out clientId, out clientSecret);
+            //    }
 
-            if (context.ClientId == null)
-            {
-                context.SetError("invalid_clientId", "client_Id is not set");
-                return Task.FromResult<object>(null);
-            }
-
-            var audience = AudiencesStore.FindAudience(context.ClientId);
-
-            if (audience == null)
-            {
-                context.SetError("invalid_clientId", string.Format("Invalid client_id '{0}'", context.ClientId));
-                return Task.FromResult<object>(null);
-            }
+            //    if (context.ClientId == null)
+            //    {
+            //        context.SetError("invalid_clientId", "client_Id is not set");
+            //        return Task.FromResult<object>(null);
+            //    }
 
             context.Validated();
 

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,13 +27,14 @@ namespace AuthService.Providers
                 return Task.FromResult<object>(null);
             }
 
-            //var props = new AuthenticationProperties(new Dictionary<string, string>
-            //    {
-            //        { "audience", (context.ClientId == null) ? string.Empty : context.ClientId }
-            //    });
+            var props = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    { "audience", (ConfigurationManager.AppSettings["audience"] != null) ? ConfigurationManager.AppSettings["audience"] : string.Empty }
+                    //{ "audience", (context.ClientId == null) ? string.Empty : context.ClientId }
+                });
 
-            //var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), props);
-            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), new AuthenticationProperties());
+            var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), props);
+            //var ticket = new AuthenticationTicket(SetClaimsIdentity(context, user), new AuthenticationProperties());
 
             context.Validated(ticket);
 
@@ -41,20 +43,22 @@ namespace AuthService.Providers
 
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            //    string clientId = string.Empty;
-            //    string clientSecret = string.Empty;
-            //    string symmetricKeyAsBase64 = string.Empty;
+            string clientId = string.Empty;
+            string clientSecret = string.Empty;
+            string symmetricKeyAsBase64 = string.Empty;
 
-            //    if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
-            //    {
-            //        context.TryGetFormCredentials(out clientId, out clientSecret);
-            //    }
+            if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
+            {
+                context.TryGetFormCredentials(out clientId, out clientSecret);
+            }
 
-            //    if (context.ClientId == null)
-            //    {
-            //        context.SetError("invalid_clientId", "client_Id is not set");
-            //        return Task.FromResult<object>(null);
-            //    }
+            if (context.ClientId == null)
+            {
+                context.SetError("invalid_clientId", "client_Id is not set");
+                return Task.FromResult<object>(null);
+            }
+
+            //TODO: Look up User in database based on context.ClientId; if found, how do we ensure this is a match anyway?
 
             context.Validated();
 

@@ -22,56 +22,26 @@ namespace AuthService.Formats
         public string Protect(AuthenticationTicket data)
         {
             if (data == null)
-            {
                 throw new ArgumentNullException(nameof(data));
-            }
 
-            var signingKey = new HmacSigningCredentials(_secret);
+            string audienceId = data.Properties.Dictionary.ContainsKey(AudiencePropertyKey) ? data.Properties.Dictionary[AudiencePropertyKey] : null;
+
+            if (string.IsNullOrWhiteSpace(audienceId))
+                throw new InvalidOperationException("AuthenticationTicket.Properties does not include audience");
+
+            //TODO: Determine if I can get the secret from the database        
+            var keyByteArray = TextEncodings.Base64Url.Decode(ConfigurationManager.AppSettings["secret"]);
+            var signingKey = new HmacSigningCredentials(keyByteArray);
+
             var issued = data.Properties.IssuedUtc;
             var expires = data.Properties.ExpiresUtc;
 
-            return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(_issuer, "Any", data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey));
+            var token = new JwtSecurityToken(_issuer, audienceId, data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey);
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.WriteToken(token);
+
+            return jwt;
         }
-
-        //public string Protect(AuthenticationTicket data)
-        //{
-        //    if (data == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(data));
-        //    }
-
-        //    //var signingKey = new HmacSigningCredentials(_secret);
-        //    //var issued = data.Properties.IssuedUtc;
-        //    //var expires = data.Properties.ExpiresUtc;
-
-        //    //return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(_issuer, "Any", data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey));
-            
-
-        //    string audienceId = data.Properties.Dictionary.ContainsKey(AudiencePropertyKey) ? data.Properties.Dictionary[AudiencePropertyKey] : null;
-
-        //    if (string.IsNullOrWhiteSpace(audienceId))
-        //        throw new InvalidOperationException("AuthenticationTicket.Properties does not include audience");
-
-        //    //TODO: Determine if I can get the secret from the database; may require changes to the AudienceStore concept.
-        //    Audience audience = AudiencesStore.FindAudience(audienceId);
-
-        //    string symmetricKeyAsBase64 = audience.Base64Secret;
-
-        //    var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
-
-        //    var signingKey = new HmacSigningCredentials(keyByteArray);
-
-        //    var issued = data.Properties.IssuedUtc;
-        //    var expires = data.Properties.ExpiresUtc;
-
-        //    var token = new JwtSecurityToken(_issuer, audienceId, data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey);
-
-        //    var handler = new JwtSecurityTokenHandler();
-
-        //    var jwt = handler.WriteToken(token);
-
-        //    return jwt;
-        //}
 
         public AuthenticationTicket Unprotect(string protectedText)
         {

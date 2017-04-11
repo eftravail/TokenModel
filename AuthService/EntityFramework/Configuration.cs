@@ -20,6 +20,13 @@ namespace AuthService.EntityFramework
 
         protected override void Seed(UsersContext context)
         {
+#if DEBUG
+            CreateUsers(context);
+#endif
+        }
+
+        private void CreateUsers(UsersContext context)
+        {
             string adminRoleId;
             string userRoleId;
 
